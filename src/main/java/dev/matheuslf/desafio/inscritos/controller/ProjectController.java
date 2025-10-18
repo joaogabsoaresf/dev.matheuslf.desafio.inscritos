@@ -1,7 +1,10 @@
 package dev.matheuslf.desafio.inscritos.controller;
 
+import dev.matheuslf.desafio.inscritos.dto.ProjectResponse;
 import dev.matheuslf.desafio.inscritos.entity.Project;
+import dev.matheuslf.desafio.inscritos.mapper.ProjectMapper;
 import dev.matheuslf.desafio.inscritos.service.ProjectService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,12 +19,14 @@ public class ProjectController {
     }
 
     @GetMapping
-    public List<Project> findAll() {
-        return projectService.findAll();
+    public ResponseEntity<List<Project>> findAll() {
+        List<Project> projects = projectService.findAll();
+        return ResponseEntity.ok(projects);
     }
 
     @PostMapping
-    public Project create(@RequestBody Project project) {
-        return projectService.save(project);
+    public ResponseEntity<ProjectResponse> create(@RequestBody Project project) {
+        Project projectResponse = projectService.save(project);
+        return ResponseEntity.ok(ProjectMapper.toProjectDTO(projectResponse));
     }
 }
