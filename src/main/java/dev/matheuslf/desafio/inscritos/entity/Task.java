@@ -6,11 +6,15 @@ import jakarta.validation.constraints.Size;
 
 import dev.matheuslf.desafio.inscritos.enums.TaskStatus;
 import dev.matheuslf.desafio.inscritos.enums.TaskPriority;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDate;
 
 @Entity
 @Table(name = "tasks")
+@Getter
+@Setter
 public class Task extends BaseEntity {
 
     @Column(name = "title", nullable = false, length = 150)

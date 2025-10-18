@@ -3,7 +3,6 @@ package dev.matheuslf.desafio.inscritos.service;
 import dev.matheuslf.desafio.inscritos.entity.Project;
 import dev.matheuslf.desafio.inscritos.repository.ProjectRepository;
 import jakarta.validation.ConstraintViolation;
-import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Validator;
 import org.springframework.stereotype.Service;
 
