@@ -4,6 +4,7 @@ import dev.matheuslf.desafio.inscritos.entity.Project;
 import dev.matheuslf.desafio.inscritos.entity.Task;
 import dev.matheuslf.desafio.inscritos.enums.TaskPriority;
 import dev.matheuslf.desafio.inscritos.enums.TaskStatus;
+import dev.matheuslf.desafio.inscritos.repository.ProjectRepository;
 import dev.matheuslf.desafio.inscritos.repository.TaskRepository;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -21,10 +23,12 @@ public class TaskService {
 
     private final TaskRepository taskRepository;
     private final Validator validator;
+    private final ProjectRepository projectRepository;
 
-    public TaskService(TaskRepository taskRepository, Validator validator) {
+    public TaskService(TaskRepository taskRepository, Validator validator, ProjectRepository projectRepository) {
         this.taskRepository = taskRepository;
         this.validator = validator;
+        this.projectRepository = projectRepository;
     }
 
     @Transactional(readOnly = true)
@@ -41,6 +45,10 @@ public class TaskService {
     }
 
     public Task save(Task task) {
+        if (task.getStatus() == null) {
+            task.setStatus(TaskStatus.TODO);
+        }
+
         Set<ConstraintViolation<Task>> violations = validator.validate(task);
         if (!violations.isEmpty()) {
             throw new IllegalArgumentException(
@@ -50,9 +58,13 @@ public class TaskService {
             );
         }
 
-        if (task.getProject() == null) {
+        if (task.getProject() == null || task.getProject().getId() == null) {
             throw new IllegalArgumentException("A tarefa deve estar vinculada a um projeto");
         }
+        Project project = projectRepository.findById(task.getProject().getId())
+                .orElseThrow(() -> new IllegalArgumentException("Projeto não encontrado"));
+
+        task.setProject(project);
         return taskRepository.save(task);
     }
 
