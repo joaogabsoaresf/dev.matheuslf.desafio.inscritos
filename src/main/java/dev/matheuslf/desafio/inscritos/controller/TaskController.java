@@ -60,4 +60,10 @@ public class TaskController {
         Task updated = taskService.updateStatus(id, request.status());
         return ResponseEntity.ok(ProjectMapper.toTaskDTO(updated));
     }
+
+    @DeleteMapping("{id}")
+    public ResponseEntity<TaskResponse> delete(@PathVariable UUID id) {
+        taskService.delete(id);
+        return ResponseEntity.noContent().build();
+    }
 }
